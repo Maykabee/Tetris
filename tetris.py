@@ -8,17 +8,17 @@ from score import Score
 from color import colors, ColorEffect
 
 
-
 score = Score()
 shape = Shapes()
 next_shape = Shapes()
 color_effect = ColorEffect(length=15)
 
+class Button():
+    # інформація про майбутні дії користувача
+    def get_Button(self):
+        pass
 
-class Button:
-
-
-
+class Button_interface(Button):
     def __init__(self, key, function, draw_on):
 
         self.key = key
@@ -84,7 +84,7 @@ class Button:
             self.function()
 
 
-class Spinner(Button):#
+class Spinner(Button_interface):
 
     def __init__(self, key, function, draw_on):
 
@@ -116,7 +116,7 @@ class Spinner(Button):#
 
         # Відображення значення spinner при включенні кнопки
         if self.button_on:
-            pg.time.wait(250)
+            pg.time.wait(250)#модуль pygame для управління часом і частотою кадрів
 
             color_text = colors['berry']
             color_text_act = color_effect.modify_color(colors['purple'], l=-50)
@@ -133,7 +133,7 @@ class Spinner(Button):#
                 click = pg.mouse.get_pressed()#отримати стан кнопок миші
 
                 color_rect = color_effect.change_color()
-                pg.draw.rect(self.screen, color_rect, rect_spinner)
+                pg.draw.rect(self.screen, color_rect, rect_spinner)#намалювати прямокутну форму
 
                 for i in range(len(self.vals)):
                     surface, rect = config.text_objects(f'{self.vals[i]}',
@@ -144,45 +144,44 @@ class Spinner(Button):#
                     rect_button = rect.copy()
                     rect_button.left = self.button_x
                     rect_button.width = self.w
-                    if rect_button.collidepoint(pos):
+                    if rect_button.collidepoint(pos):#Метод collidepoint () об'єкта Rect перевіряє, чи знаходиться точка,
+                    #координати якої були передані в якості аргументу, в межах прямокутника, до якого застосовується метод
                         if click[0] == 1:
                             self.function(self.vals[i])
                             self.current_val = f'{self.vals[i]}'
                             self.text = f'{self.key} {self.current_val}'
                             self.draw_params['text'] = self.text
                             running = False
-                        surface, rect = config.text_objects(f'{self.vals[i]}',
+                        surface, rect = config.text_objects(f'{self.vals[i]}',# Представлення значень на поверхності, її розміщення і колір
                                                             x_center=cx,
                                                             y_center=cy + self.h / 2 + i * self.h,
                                                             color=color_text_act,
                                                             font_size=self.vals_font_size * 2)
-                        self.screen.blit(surface, rect)
+                        self.screen.blit(surface, rect)#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
                     else:
                         self.screen.blit(surface, rect)
 
-                pg.display.update()
+                pg.display.update()#модуль pygame для оновлення
 
-                if not rect_spinner.collidepoint(pos):
+                if not rect_spinner.collidepoint(pos):#Метод collidepoint () об'єкта Rect перевіряє, чи знаходиться точка,
+                    #координати якої були передані в якості аргументу, в межах прямокутника, до якого застосовується метод
                     running = False
 
             self.button_on = False
-            pg.time.wait(250)
+            pg.time.wait(250)#модуль pygame для управління часом і частотою кадрів
 
-    # / ----------------------------------------------------------------------- \
 
 
 class Tetris:
 
-    # / ----------------------------------------------------------------------- \
-
     def __init__(self):
 
         self.screen = pg.display.set_mode((config.window_w, config.window_h))
-        pg.display.set_caption('TETRIS')
+        pg.display.set_caption('TETRIS') # Доступ до дисплея
 
 
-        self.functions = {pg.K_LEFT: shape.move_left,
+        self.functions = {pg.K_LEFT: shape.move_left, # управління
                           pg.K_RIGHT: shape.move_right,
                           pg.K_DOWN: shape.move_down,
                           pg.K_r: shape.rotate,
@@ -199,41 +198,39 @@ class Tetris:
 
         self.running = False
 
-    # / ----------------------------------------------------------------------- \
-    # Функції малювання
-    # / ----------------------------------------------------------------------- \
 
-    def draw_score(self, color):
+    # Функції малювання
+    def draw_score(self, color): #Вивід рахунку
         text = f'Score : {score.score}'
+        # Представлення рахунку на поверхності, її розміщення і колір
         surface, rect = config.text_objects(text,
                                             x_center=config.texts['score']['x'],
                                             y_center=config.texts['score']['y'],
                                             color=color)
-        self.screen.blit(surface, rect)
+        self.screen.blit(surface, rect)#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
 
 
-    def draw_next_shape(self, color):
+    def draw_next_shape(self, color):#Вивід наступної фігури на екран
         if config.see_next_shape:
             cx, cy = config.rects['next_shape'].center
             next_shape.draw_next_shape(cx, cy, self.screen)
 
             pg.draw.rect(self.screen, color, config.rects['next_shape'], 5)
-
+            # Представлення фігури на поверхності, її розміщення і колір
             surface, rect = config.text_objects('Next Shape',
                                                 x_center=config.texts['next_shape']['x'],
                                                 y_center=config.texts['next_shape']['y'],
                                                 color=color)
-            self.screen.blit(surface, rect)
+            self.screen.blit(surface, rect)#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
-            # / ----------------------------------------------------------------------- \
 
-    def draw_background(self):
+    def draw_background(self): #Малювання фону
 
         color = color_effect.change_color()
 
         # Фон
-        self.screen.blit(config.images['GAME BACKGROUND'], (0, 0))
+        self.screen.blit(config.images['GAME BACKGROUND'], (0, 0))#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
         # Межі гри
         pg.draw.rect(self.screen, color, config.rects['game_boundaries'], 5)
@@ -243,13 +240,12 @@ class Tetris:
         self.draw_score(color)
 
 
-    # / ----------------------------------------------------------------------- \
-
     def draw_records(self, names, records, color):
 
         text = 'TOP FIVE'
         x = config.texts['top five']['x']
         y = config.texts['top five']['y']
+        # Представлення тексту на поверхності, її розміщення і колір
         surface, rect = config.text_objects(text, left=x, top=y, color=color)
         self.screen.blit(surface, rect)
 
@@ -257,25 +253,24 @@ class Tetris:
             text = f'{names[i]} ......... {records[i]:2}'
             x = config.texts['records']['x']
             y = config.texts['records']['y'] + i * config.texts['records']['y_space']
-            surface, rect = config.text_objects(text, left=x, top=y, color=color)
-            self.screen.blit(surface, rect)
+            surface, rect = config.text_objects(text, left=x, top=y, color=color)# Представлення тексту на поверхності, її розміщення і колір
+            self.screen.blit(surface, rect)#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
-    # / ----------------------------------------------------------------------- \
 
     def draw_game_over(self):
 
         text = 'GAME OVER'
+        # Представлення тексту на поверхності, її розміщення і колір
         surface, rect = config.text_objects(text,
                                             x_center=config.texts['game_over']['x'],
                                             y_center=config.texts['game_over']['y'],
                                             rotation_angle=45,
                                             font_size=config.huge_text,
                                             color=colors['berry'])
-        self.screen.blit(surface, rect)
-        pg.display.update()
-        pg.time.wait(1000)
+        self.screen.blit(surface, rect)#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
+        pg.display.update()#модуль pygame для оновлення
+        pg.time.wait(1000)#модуль pygame для управління часом і частотою кадрів
 
-    # / ----------------------------------------------------------------------- \
 
     def start_count(self):
 
@@ -283,27 +278,20 @@ class Tetris:
 
         for text in texts:
             color = color_effect.change_color()
-            surface, rect = config.text_objects(text,
+            surface, rect = config.text_objects(text,# Представлення рахунку на поверхності, її розміщення і колір
                                                 x_center=config.texts['start']['x'],
                                                 y_center=config.texts['start']['y'],
                                                 font_size=config.huge_text,
                                                 color=color)
             self.draw_background()
-            self.screen.blit(surface, rect)
+            self.screen.blit(surface, rect)#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
             pg.display.update()
-            pg.time.wait(1000)
-
-    # / ----------------------------------------------------------------------- \
+            pg.time.wait(1000)#модуль pygame для управління часом і частотою кадрів
 
     # Функції
-
-    # / ----------------------------------------------------------------------- \
-
     def exit(self):
         pg.quit()
         quit()
-
-    # / ----------------------------------------------------------------------- \
 
     def pause(self):
         pause = True
@@ -317,25 +305,17 @@ class Tetris:
                 if event.key == pg.K_SPACE:
                     pause = False
 
-                    # / ----------------------------------------------------------------------- \
-
-
-    # / ----------------------------------------------------------------------- \
-
     def _continue(self):
         shape.restart()
         score.restart(level=True)
         self.play()
 
-    # / ----------------------------------------------------------------------- \
 
     def restart_game(self):
         config.speed = 3
         shape.restart()
         score.restart()
         self.play()
-
-    # / ----------------------------------------------------------------------- \
 
     def home(self):
         config.speed = 3
@@ -349,20 +329,12 @@ class Tetris:
             loss = True
         return loss
 
-    # / ----------------------------------------------------------------------- \
-
     # Інтерактивні функції
-
-    # / ----------------------------------------------------------------------- \
-
-    def menu(self):
+    def menu(self):#функція для головного меню
 
         key_buttons = ['START', 'RANKING', 'EXIT']
-        buttons = [Button(key, self.functions[key], self.screen) for key in key_buttons]
+        buttons = [Button_interface(key, self.functions[key], self.screen) for key in key_buttons]
 
-        text = 'Press F1 to see keyboard instructions'
-        cx = config.texts['instructions']['x']
-        cy = config.texts['instructions']['y']
 
         self.running = True
         while self.running:
@@ -373,61 +345,33 @@ class Tetris:
 
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_F1:
-                        button = self.see_instructions
+
                         buttons.append(button)
                         self.running = False
 
-            self.screen.blit(config.images['MENU BACKGROUND'], (0, 0))
-
-
+            self.screen.blit(config.images['MENU BACKGROUND'], (0, 0))#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
             for button in buttons:
-                if isinstance(button, Button):
+                if isinstance(button, Button):#Повертає прапор, який вказує на те, чи є зазначений об'єкт екземпляром зазначеного класу
                     button.status()
                     if button.button_on:
                         self.running = False
 
-            pg.display.update()
-            config.clock.tick(config.fps)
+            pg.display.update()#модуль pygame для оновлення
+            config.clock.tick(config.fps)#частота картинок за хвилину
 
-        pg.time.wait(250)
+        pg.time.wait(250)#модуль pygame для управління часом і частотою кадрів
 
         for button in buttons:
             button()
 
-    # / ----------------------------------------------------------------------- \
 
-    def see_instructions(self):
-
-        key_button = 'BACK'
-        button = Button(key_button, self.functions[key_button], self.screen)
-
-        self.running = True
-        while self.running:
-
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    self.exit()
-
-            self.screen.blit(config.images['INSTRUCTIONS'], (0, 0))
-
-            button.status()
-            if button.button_on:
-                self.running = False
-
-            pg.display.update()
-            config.clock.tick(config.fps)
-
-        button()
-
-        # / ----------------------------------------------------------------------- \
-
-    def ranking(self):
+    def ranking(self):#функція по перегляду топ 5 рейтингу
 
         names, records = score.load_records()
 
         key_button = 'BACK'
-        button = Button(key_button, self.functions[key_button], self.screen)
+        button = Button_interface(key_button, self.functions[key_button], self.screen)
 
         self.running = True
         while self.running:
@@ -436,7 +380,7 @@ class Tetris:
                 if event.type == pg.QUIT:
                     self.exit()
 
-            self.screen.blit(config.images['RECORDS BACKGROUND'], (0, 0))
+            self.screen.blit(config.images['RECORDS BACKGROUND'], (0, 0))#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
             button.status()
             if button.button_on:
@@ -445,19 +389,15 @@ class Tetris:
             color = color_effect.change_color()
             self.draw_records(names, records, color)
 
-            pg.display.update()
-            config.clock.tick(config.fps)
+            pg.display.update()#модуль pygame для оновлення
+            config.clock.tick(config.fps)#частота картинок за хвилину
 
         button()
 
-        # / ----------------------------------------------------------------------- \
-
-    # / ----------------------------------------------------------------------- \
-
-    def restart_continue(self):
+    def restart_continue(self):#функція меню після закінчення гри
 
         key_buttons = ['HOME', 'RESTART GAME']
-        buttons = [Button(key, self.functions[key], self.screen) for key in key_buttons]
+        buttons = [Button_interface(key, self.functions[key], self.screen) for key in key_buttons]
 
         self.running = True
         while self.running:
@@ -466,7 +406,7 @@ class Tetris:
                 if event.type == pg.QUIT:
                     self.exit()
 
-            self.screen.blit(config.images['MENU BACKGROUND'], (0, 0))
+            self.screen.blit(config.images['MENU BACKGROUND'], (0, 0))#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
             for button in buttons:
                 button.status()
@@ -480,9 +420,7 @@ class Tetris:
             if button.button_on:
                 return button
 
-    # / ----------------------------------------------------------------------- \
-
-    def write_record(self):
+    def write_record(self):#функція для запису рахунку
 
         chars = string.ascii_uppercase
         chars += string.digits
@@ -532,16 +470,17 @@ class Tetris:
 
             text = ''.join(name)
             color = color_effect.change_color()
+            # розміщення тексту на поверхні
             surface, rect = config.text_objects(text,
                                                 x_center=config.texts['write_record']['x'],
                                                 y_center=config.texts['write_record']['y'],
                                                 color=color)
             # Малювання фону
             pg.draw.rect(self.screen, colors['gray'], rect)
-            self.screen.blit(surface, rect)
+            self.screen.blit(surface, rect)#метод blit () застосовується до батьківської Surface, в той час як дочірня приймає в якості аргументу.
 
-            pg.display.update()
-            config.clock.tick(config.fps)
+            pg.display.update()#модуль pygame для оновлення
+            config.clock.tick(config.fps)#частота картинок за хвилину
 
             if count == 4:
                 self.running = False
@@ -550,11 +489,9 @@ class Tetris:
         name = name.replace(' ', '')
         score.save_record(name)
 
-        pg.time.wait(1000)
+        pg.time.wait(1000)#модуль pygame для управління часом і частотою кадрів
 
-    # / ----------------------------------------------------------------------- \
-
-    def play(self):
+    def play(self):#функція гри
 
         shape.next_shape()
         next_shape.next_shape()
@@ -640,18 +577,10 @@ class Tetris:
                 button = self.restart_continue()
 
 
-        pg.time.wait(250)
+        pg.time.wait(250)#модуль pygame для управління часом і частотою кадрів
         button()
-
-    # / ----------------------------------------------------------------------- \
 
 
 if __name__ == '__main__':
     tetris = Tetris()
     tetris.menu()
-
-# / -------------------------------------------------------------------------- \
-# / --------------------------------------------------- \
-# / -------------------------------- \
-# / ------------- \
-# /Кінець
