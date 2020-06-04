@@ -15,8 +15,8 @@ shapes_colors = [colors['pink'], colors['purple'], colors['cherry'], colors['ber
 
 class Tetromino(ABC):
 
-    def __init__(self, shape=0):
-        self.shape = shape
+    def __init__(self):
+        self.shape = None
 
     @abstractmethod
     def get_color(self):
@@ -156,21 +156,41 @@ class ZTetrimino(Tetromino):
         return super().get_color()
 
 
-T = TTetrimino().get_shape()
-S = STetrimino().get_shape()
-Z = ZTetrimino().get_shape()
-O = OTetrimino().get_shape()
-L = LTetrimino().get_shape()
-J = JTetrimino().get_shape()
-I = ITetrimino().get_shape()
+class TetrominoFactory(ABC):
 
-Tc = TTetrimino().get_color()
-Sc = STetrimino().get_color()
-Zc = ZTetrimino().get_color()
-Oc = OTetrimino().get_color()
-Lc = LTetrimino().get_color()
-Jc = JTetrimino().get_color()
-Ic = ITetrimino().get_color()
+    @staticmethod
+    def create_tetromino(tetro_type):
+        if tetro_type == 'T' :
+            return TTetrimino()
+        elif tetro_type == 'S' :
+            return STetrimino()
+        elif tetro_type == 'Z':
+            return ZTetrimino()
+        elif tetro_type == 'O':
+            return OTetrimino()
+        elif tetro_type == 'L':
+            return LTetrimino()
+        elif tetro_type == 'J':
+            return JTetrimino()
+        elif tetro_type == 'I':
+            return ITetrimino()
+
+
+T = TetrominoFactory.create_tetromino('T').get_shape()
+S = TetrominoFactory.create_tetromino('S').get_shape()
+Z = TetrominoFactory.create_tetromino('Z').get_shape()
+O = TetrominoFactory.create_tetromino('O').get_shape()
+L = TetrominoFactory.create_tetromino('L').get_shape()
+J = TetrominoFactory.create_tetromino('J').get_shape()
+I = TetrominoFactory.create_tetromino('I').get_shape()
+
+Tc = TetrominoFactory.create_tetromino('T').get_color()
+Sc = TetrominoFactory.create_tetromino('S').get_color()
+Zc = TetrominoFactory.create_tetromino('Z').get_color()
+Oc = TetrominoFactory.create_tetromino('O').get_color()
+Lc = TetrominoFactory.create_tetromino('L').get_color()
+Jc = TetrominoFactory.create_tetromino('J').get_color()
+Ic = TetrominoFactory.create_tetromino('I').get_color()
 
 dict_shapes = {'T': T,
                'S': S,
@@ -547,7 +567,6 @@ class Shapes:
                 pg.draw.rect(screen, color, rect)
                 pg.draw.rect(screen, colors['white'], rect, 1)
 
-    # / ----------------------------------------------------------------------- \
 
     def draw_next_shape(self, x, y, screen):
 
@@ -560,10 +579,4 @@ class Shapes:
             pg.draw.rect(screen, color, rect)
             pg.draw.rect(screen, colors['white'], rect, 1)
 
-            # / ----------------------------------------------------------------------- \
-
-# / -------------------------------------------------------------------------- \
-# / --------------------------------------------------- \
-# / -------------------------------- \
-# / ------------- \
 # /Кінець
